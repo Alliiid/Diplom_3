@@ -1,9 +1,12 @@
 package pages;
 
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class LoginPage extends BasePage {
 
@@ -16,14 +19,13 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//button[text()='Войти']")
     private WebElement loginButton;
 
-    @FindBy(xpath = "//a[contains(@href, '/register')]")
+    @FindBy(xpath = "//a[contains(@href, 'register')]")
     private WebElement registerLink;
 
-    @FindBy(xpath = "//a[contains(@href, '/forgot-password')]")
+    @FindBy(xpath = "//a[contains(@href, 'forgot-password')]")
     private WebElement forgotPasswordLink;
 
-    /** Ссылка «Войти» на странице восстановления пароля и на странице регистрации */
-    @FindBy(xpath = "//a[@href='/login']")
+    @FindBy(xpath = "//a[contains(@href, 'login')]")
     private WebElement loginLink;
 
     public LoginPage(WebDriver driver) {
@@ -64,7 +66,9 @@ public class LoginPage extends BasePage {
 
     @Step("Кликнуть ссылку 'Войти'")
     public void clickLoginLink() {
-        click(loginLink);
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//a[contains(@href, 'login')]")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 
     @Step("Проверить, что кнопка 'Войти' видна")
