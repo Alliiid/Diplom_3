@@ -1,10 +1,9 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class ProfilePage extends BasePage {
 
@@ -16,14 +15,15 @@ public class ProfilePage extends BasePage {
 
     public ProfilePage(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this);
     }
 
+    @Step("Кликнуть 'Выход'")
     public void clickLogoutButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(logoutButton)).click();
+        click(logoutButton);
     }
 
+    @Step("Проверить, что страница профиля отображается")
     public boolean isProfilePageDisplayed() {
-        return wait.until(ExpectedConditions.visibilityOf(profileHeader)).isDisplayed();
+        return isVisible(profileHeader);
     }
 }

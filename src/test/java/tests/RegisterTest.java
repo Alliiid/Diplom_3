@@ -1,117 +1,50 @@
 package tests;
 
-import config.DriverSetup;
-import org.junit.After;
-import org.junit.Before;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
+import pages.LoginPage;
+import pages.MainPage;
+import pages.RegisterPage;
 
 import static org.junit.Assert.assertTrue;
 
-public class RegisterTest {
+public class RegisterTest extends BaseTest {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    @Test
+    @DisplayName("Успешная регистрация")
+    @Description("Проверка успешной регистрации нового пользователя")
+    public void testSuccessfulRegistration() {
+        String email = "new_" + System.currentTimeMillis() + "@test.ru";
+        String password = "password123";
+        String name = "Test User";
 
-    @Before
-    public void setUp() {
-        driver = DriverSetup.getChromeDriver();
-        driver.get(DriverSetup.BASE_URL);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickLoginButton();
+
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.clickRegisterLink();
+
+        RegisterPage registerPage = new RegisterPage(driver);
+        registerPage.register(name, email, password);
+
+        assertTrue("Должна быть страница входа", loginPage.isLoginButtonVisible());
     }
 
     @Test
-    public void testSuccessfulRegistration() throws Exception {
-        Thread.sleep(3000);
+    @DisplayName("Ошибка при коротком пароле")
+    @Description("Проверка ошибки при пароле короче 6 символов")
+    public void testShortPasswordError() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickLoginButton();
 
-        // Клик на "Войти"
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(), 'Войти')]")
-        )).click();
-        Thread.sleep(2000);
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.clickRegisterLink();
 
-        // Клик на "Зарегистрироваться"
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[contains(text(), 'Зарегистрироваться')]")
-        )).click();
-        Thread.sleep(2000);
+        RegisterPage registerPage = new RegisterPage(driver);
+        registerPage.register("Test User",
+                "short_" + System.currentTimeMillis() + "@test.ru", "12345");
 
-        String email = "test_" + System.currentTimeMillis() + "@test.ru";
-
-        // Ввод имени - на странице регистрации поле Имя
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//input[@name='name' and @type='text']")
-        )).sendKeys("Test User");
-
-        // Ввод Email - на странице регистрации поле Email тоже type='text'!
-        // Но оно второе по счёту, используем другой локатор
-        driver.findElement(By.xpath("(//input[@type='text'])[2]")).sendKeys(email);
-
-        // Ввод пароля
-        driver.findElement(By.xpath("//input[@type='password']")).sendKeys("password123");
-
-        // Клик на "Зарегистрироваться"
-        driver.findElement(By.xpath("//button[contains(text(), 'Зарегистрироваться')]")).click();
-        Thread.sleep(3000);
-
-        // Проверка - появилась страница входа
-        boolean isLoginPage = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//button[contains(text(), 'Войти')]")
-        )).isDisplayed();
-
-        assertTrue("Должна быть страница входа", isLoginPage);
-    }
-
-    @Test
-    public void testShortPasswordError() throws Exception {
-        Thread.sleep(3000);
-
-        // Клик на "Войти"
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//button[contains(text(), 'Войти')]")
-        )).click();
-        Thread.sleep(2000);
-
-        // Клик на "Зарегистрироваться"
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[contains(text(), 'Зарегистрироваться')]")
-        )).click();
-        Thread.sleep(2000);
-
-        String email = "test_" + System.currentTimeMillis() + "@test.ru";
-
-        // Ввод имени
-        wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//input[@name='name' and @type='text']")
-        )).sendKeys("Test User");
-
-        // Ввод Email
-        driver.findElement(By.xpath("(//input[@type='text'])[2]")).sendKeys(email);
-
-        // Ввод короткого пароля
-        driver.findElement(By.xpath("//input[@type='password']")).sendKeys("12345");
-
-        // Клик на "Зарегистрироваться"
-        driver.findElement(By.xpath("//button[contains(text(), 'Зарегистрироваться')]")).click();
-        Thread.sleep(2000);
-
-        // Проверка сообщения об ошибке
-        boolean errorVisible = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//p[contains(text(), 'Некорректный пароль')]")
-        )).isDisplayed();
-
-        assertTrue("Должно быть сообщение об ошибке", errorVisible);
-    }
-
-    @After
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        assertTrue("Должно быть сообщение об ошибке", registerPage.isErrorMessageVisible());
     }
 }

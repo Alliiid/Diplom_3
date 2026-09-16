@@ -1,91 +1,39 @@
 package tests;
 
-import config.DriverSetup;
-import org.junit.After;
-import org.junit.Before;
+import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
+import pages.MainPage;
 
 import static org.junit.Assert.assertTrue;
 
-public class ConstructorTest {
+public class ConstructorTest extends BaseTest {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
-
-    @Before
-    public void setUp() {
-        driver = DriverSetup.getChromeDriver();
-        driver.get(DriverSetup.BASE_URL);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+    @Test
+    @DisplayName("Переход к разделу 'Булки'")
+    @Description("Проверка активации таба 'Булки' через className")
+    public void testBunsSection() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickSaucesTab();   // сначала переключаемся на другой
+        mainPage.clickBunsTab();     // потом возвращаемся
+        assertTrue("Таб 'Булки' должен быть активен", mainPage.isBunsTabActive());
     }
 
     @Test
-    public void testBunsSection() throws Exception {
-        Thread.sleep(2000);
-
-        // Используем JavaScript для клика
-        WebElement bunsTab = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//span[contains(text(),'Булки')]/parent::div")
-        ));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", bunsTab);
-
-        Thread.sleep(500);
-
-        boolean visible = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//h2[contains(text(),'Булки')]")
-        )).isDisplayed();
-
-        assertTrue("Раздел 'Булки' должен быть виден", visible);
+    @DisplayName("Переход к разделу 'Соусы'")
+    @Description("Проверка активации таба 'Соусы' через className")
+    public void testSaucesSection() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickSaucesTab();
+        assertTrue("Таб 'Соусы' должен быть активен", mainPage.isSaucesTabActive());
     }
 
     @Test
-    public void testSaucesSection() throws Exception {
-        Thread.sleep(2000);
-
-        WebElement saucesTab = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//span[contains(text(),'Соусы')]/parent::div")
-        ));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", saucesTab);
-
-        Thread.sleep(500);
-
-        boolean visible = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//h2[contains(text(),'Соусы')]")
-        )).isDisplayed();
-
-        assertTrue("Раздел 'Соусы' должен быть виден", visible);
-    }
-
-    @Test
-    public void testFillingsSection() throws Exception {
-        Thread.sleep(2000);
-
-        WebElement fillingsTab = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//span[contains(text(),'Начинки')]/parent::div")
-        ));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", fillingsTab);
-
-        Thread.sleep(500);
-
-        boolean visible = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//h2[contains(text(),'Начинки')]")
-        )).isDisplayed();
-
-        assertTrue("Раздел 'Начинки' должен быть виден", visible);
-    }
-
-    @After
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+    @DisplayName("Переход к разделу 'Начинки'")
+    @Description("Проверка активации таба 'Начинки' через className")
+    public void testFillingsSection() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.clickFillingsTab();
+        assertTrue("Таб 'Начинки' должен быть активен", mainPage.isFillingsTabActive());
     }
 }
