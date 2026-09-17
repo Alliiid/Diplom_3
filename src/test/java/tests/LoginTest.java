@@ -5,6 +5,7 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
 import pages.LoginPage;
 import pages.MainPage;
+import pages.ForgotPasswordPage;
 
 import static org.junit.Assert.assertTrue;
 
@@ -60,8 +61,12 @@ public class LoginTest extends BaseTest {
 
         LoginPage loginPage = new LoginPage(driver);
         loginPage.clickForgotPasswordLink();
-        loginPage.clickLoginLink();
-        loginPage.login(testUser.getEmail(), testUser.getPassword());
+
+        ForgotPasswordPage forgotPasswordPage = new ForgotPasswordPage(driver);
+        forgotPasswordPage.clickLoginLink();
+
+        LoginPage loginPageAfterReturn = new LoginPage(driver);
+        loginPageAfterReturn.login(testUser.getEmail(), testUser.getPassword());
 
         assertTrue("Пользователь должен быть авторизован", mainPage.isUserLoggedIn());
     }

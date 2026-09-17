@@ -1,12 +1,10 @@
 package pages;
 
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class LoginPage extends BasePage {
 
@@ -25,7 +23,7 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//a[contains(@href, 'forgot-password')]")
     private WebElement forgotPasswordLink;
 
-    @FindBy(xpath = "//a[contains(@href, 'login')]")
+    @FindBy(xpath = "//a[contains(@class, 'Auth_link')]")
     private WebElement loginLink;
 
     public LoginPage(WebDriver driver) {
@@ -66,9 +64,7 @@ public class LoginPage extends BasePage {
 
     @Step("Кликнуть ссылку 'Войти'")
     public void clickLoginLink() {
-        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.xpath("//a[contains(@href, 'login')]")));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", loginLink);
     }
 
     @Step("Проверить, что кнопка 'Войти' видна")
